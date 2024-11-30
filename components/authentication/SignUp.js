@@ -1,10 +1,14 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import {useNavigation} from '@react-navigation/native';
 
 const SignUp = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.mainContainer}>
-      <Text>SignUp</Text>
+      <Pressable onPress={() => navigation.navigate('Login')}>
+        <Text>SignUp</Text>
+      </Pressable>
     </View>
   );
 };
