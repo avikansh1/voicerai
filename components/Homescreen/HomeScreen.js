@@ -10,11 +10,57 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+
+const CustomLoadingIndicator = () => {
+  const rotateAnim = useRef(new Animated.Value(0)).current; // Value to animate rotation
+
+  // Rotating the image
+  useEffect(() => {
+    const rotate = Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 2000, // Duration for one complete rotation
+        useNativeDriver: true,
+      }),
+    );
+
+    rotate.start();
+  }, [rotateAnim]);
+
+  // Interpolating the rotation value to convert from 0 to 360 degrees
+  const rotation = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  return (
+    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+      <Animated.Image
+        source={require('../../assets/loadingImage.png')} // Your custom loading image
+        style={{
+          width: 100,
+          height: 100,
+          transform: [{rotate: rotation}],
+        }}
+      />
+    </View>
+  );
+};
 
 const HomeScreen = () => {
+  const [loading, setLoading] = useState(true);
   const slideMedicalAnim = useRef(new Animated.Value(-200)).current; // Start off-screen
   const slideOfferAnim = useRef(new Animated.Value(300)).current; // Start below screen
+
+  useEffect(() => {
+    // Simulate loading time (e.g., 3 seconds)
+    const timer = setTimeout(() => {
+      setLoading(false); // Hide the loading indicator after 3 seconds
+    }, 2000);
+
+    return () => clearTimeout(timer); // Cleanup the timer on component unmount
+  }, []);
 
   useEffect(() => {
     // Slide in the `medicalServiceContainer`
@@ -36,148 +82,166 @@ const HomeScreen = () => {
   return (
     <ScrollView>
       <View style={styles.mainComponent}>
-        <View style={styles.headerContainer}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              // backgroundColor: 'red',
-              padding: 10,
-              justifyContent: 'space-evenly',
-            }}>
-            <Image
-              style={{marginRight: 25}}
-              source={require('../../assets/burger_bar.png')}
-            />
-            <Image source={require('../../assets/logo.png')} />
-          </View>
-          <TouchableOpacity
-            style={{
-              // backgroundColor: 'green',
-              padding: 15,
-              borderRadius: 25,
-              borderWidth: 2,
-            }}>
-            <Image source={require('../../assets/mic_logo.png')} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.optionContainer}>
-          <View style={styles.otionsUpperContainer}>
-            <Pressable style={styles.optionContainerButton}>
-              <Text style={styles.optionText}>Questions</Text>
-              <Image source={require('../../assets/questionIcon.png')} />
-            </Pressable>
-            <Pressable style={styles.optionContainerButton}>
-              <Text style={styles.optionText}>Reminders</Text>
-              <Image source={require('../../assets/remindersIcon.png')} />
-            </Pressable>
-          </View>
-          <View style={styles.otionsUpperContainer}>
-            <Pressable style={styles.optionContainerButton}>
-              <Text style={styles.optionText}>Messages</Text>
-              <Image source={require('../../assets/humanMessageIcon.png')} />
-            </Pressable>
-            <Pressable style={styles.optionContainerButton}>
-              <Text style={styles.optionText}>Calendar</Text>
-              <Image source={require('../../assets/colorCalendar.png')} />
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.PrescriptionContainer}>
+        {loading ? (
+          <CustomLoadingIndicator /> // Show custom loading indicator
+        ) : (
           <View>
-            <Text style={styles.PrescriptionText}>Upload Prescription</Text>
-            <Text style={styles.PrescriptionSmallText}>
-              Upload a Prescription and Tell Us What you Need. We do the Rest. !
-            </Text>
-          </View>
-
-          <View style={styles.PrescriptionLowerContainer}>
-            <View style={styles.offerContainer}>
-              <Text style={styles.offerText}>Flat 25% OFF ON </Text>
-              <Text style={styles.offerText}>MEDICINES </Text>
-            </View>
-            <TouchableOpacity style={styles.oderNow}>
-              <Text style={styles.oderText}>OrderNow</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.mainBottomContainer}>
-          <Animated.View
-            style={[
-              styles.medicalServiceContainer,
-              {transform: [{translateY: slideMedicalAnim}]},
-            ]}>
-            <View style={{width: '70%'}}>
-              <Text style={styles.medicalServiceUpperText}>Get the Best</Text>
-              <Text style={styles.medicalServiceUpperText}>
-                Medical Service
-              </Text>
-              <Text style={styles.medicalServiceBottomText}>
-                Rem illum facere quo corporis Quis in saepe itaque ut quos
-                pariatur. Qui numquam rerum hic repudiandae rerum id amet
-                tempore nam molestias omnis qui earum voluptatem!
-              </Text>
-            </View>
-            <Image style={{}} source={require('../../assets/docImage.png')} />
-          </Animated.View>
-          <Image
-            style={styles.backgroundImage}
-            source={require('../../assets/backgroundImage.png')}
-          />
-          <Animated.View
-            style={[
-              styles.offerBottomContainer,
-              {transform: [{translateX: slideOfferAnim}]},
-            ]}>
-            <View style={{}}>
-              <View style={styles.offerBottomInfoContainer}>
-                <Image source={require('../../assets/UPTO.png')} />
-                <View style={{padding: 5}}>
-                  <Text style={{fontWeight: '700', fontSize: 40}}>80 %</Text>
-                  <Text style={{fontWeight: '700', fontSize: 20}}>Offer</Text>
-                </View>
-              </View>
+            <View style={styles.headerContainer}>
               <View
                 style={{
-                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  // backgroundColor: 'red',
+                  padding: 10,
+                  justifyContent: 'space-evenly',
                 }}>
-                <Text style={{fontWeight: '700', fontSize: 16}}>
-                  On Health Products
+                <Image
+                  style={{marginRight: 25}}
+                  source={require('../../assets/burger_bar.png')}
+                />
+                <Image source={require('../../assets/logo.png')} />
+              </View>
+              <TouchableOpacity
+                style={{
+                  // backgroundColor: 'green',
+                  padding: 15,
+                  borderRadius: 25,
+                  borderWidth: 2,
+                }}>
+                <Image source={require('../../assets/mic_logo.png')} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.optionContainer}>
+              <View style={styles.otionsUpperContainer}>
+                <Pressable style={styles.optionContainerButton}>
+                  <Text style={styles.optionText}>Questions</Text>
+                  <Image source={require('../../assets/questionIcon.png')} />
+                </Pressable>
+                <Pressable style={styles.optionContainerButton}>
+                  <Text style={styles.optionText}>Reminders</Text>
+                  <Image source={require('../../assets/remindersIcon.png')} />
+                </Pressable>
+              </View>
+              <View style={styles.otionsUpperContainer}>
+                <Pressable style={styles.optionContainerButton}>
+                  <Text style={styles.optionText}>Messages</Text>
+                  <Image
+                    source={require('../../assets/humanMessageIcon.png')}
+                  />
+                </Pressable>
+                <Pressable style={styles.optionContainerButton}>
+                  <Text style={styles.optionText}>Calendar</Text>
+                  <Image source={require('../../assets/colorCalendar.png')} />
+                </Pressable>
+              </View>
+            </View>
+
+            <View style={styles.PrescriptionContainer}>
+              <View>
+                <Text style={styles.PrescriptionText}>Upload Prescription</Text>
+                <Text style={styles.PrescriptionSmallText}>
+                  Upload a Prescription and Tell Us What you Need. We do the
+                  Rest. !
                 </Text>
-                <TouchableOpacity
-                  style={{
-                    width: 137,
-                    backgroundColor: '#1C82DF',
-                    // padding: 15,
-                    borderRadius: 10,
-                    height: 38,
-                    marginTop: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontWeight: '700',
-                      fontSize: 20,
-                      color: '#fff',
-                      lineHeight: 32,
-                    }}>
-                    Shop Now
-                  </Text>
+              </View>
+
+              <View style={styles.PrescriptionLowerContainer}>
+                <View style={styles.offerContainer}>
+                  <Text style={styles.offerText}>Flat 25% OFF ON </Text>
+                  <Text style={styles.offerText}>MEDICINES </Text>
+                </View>
+                <TouchableOpacity style={styles.oderNow}>
+                  <Text style={styles.oderText}>OrderNow</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-            <Image
-              style={{resizeMode: 'contain', width: '100%', height: '100%'}}
-              //   resizeMethod="resize"
-              source={require('../../assets/Vitamins.png')}
-            />
-          </Animated.View>
-        </View>
+            <View style={styles.mainBottomContainer}>
+              <Animated.View
+                style={[
+                  styles.medicalServiceContainer,
+                  {transform: [{translateY: slideMedicalAnim}]},
+                ]}>
+                <View style={{width: '70%'}}>
+                  <Text style={styles.medicalServiceUpperText}>
+                    Get the Best
+                  </Text>
+                  <Text style={styles.medicalServiceUpperText}>
+                    Medical Service
+                  </Text>
+                  <Text style={styles.medicalServiceBottomText}>
+                    Rem illum facere quo corporis Quis in saepe itaque ut quos
+                    pariatur. Qui numquam rerum hic repudiandae rerum id amet
+                    tempore nam molestias omnis qui earum voluptatem!
+                  </Text>
+                </View>
+                <Image
+                  style={{}}
+                  source={require('../../assets/docImage.png')}
+                />
+              </Animated.View>
+              <Image
+                style={styles.backgroundImage}
+                source={require('../../assets/backgroundImage.png')}
+              />
+              <Animated.View
+                style={[
+                  styles.offerBottomContainer,
+                  {transform: [{translateX: slideOfferAnim}]},
+                ]}>
+                <View style={{}}>
+                  <View style={styles.offerBottomInfoContainer}>
+                    <Image source={require('../../assets/UPTO.png')} />
+                    <View style={{padding: 5}}>
+                      <Text style={{fontWeight: '700', fontSize: 40}}>
+                        80 %
+                      </Text>
+                      <Text style={{fontWeight: '700', fontSize: 20}}>
+                        Offer
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      justifyContent: 'space-between',
+                    }}>
+                    <Text style={{fontWeight: '700', fontSize: 16}}>
+                      On Health Products
+                    </Text>
+                    <TouchableOpacity
+                      style={{
+                        width: 137,
+                        backgroundColor: '#1C82DF',
+                        // padding: 15,
+                        borderRadius: 10,
+                        height: 38,
+                        marginTop: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          fontSize: 20,
+                          color: '#fff',
+                          lineHeight: 32,
+                        }}>
+                        Shop Now
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <Image
+                  style={{resizeMode: 'contain', width: '100%', height: '100%'}}
+                  //   resizeMethod="resize"
+                  source={require('../../assets/Vitamins.png')}
+                />
+              </Animated.View>
+            </View>
+          </View>
+        )}
       </View>
     </ScrollView>
   );

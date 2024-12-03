@@ -1,55 +1,115 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
+import React, {useState} from 'react';
 import {
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
-import React from 'react';
 import {useNavigation} from '@react-navigation/native';
+import Mail from 'react-native-vector-icons/MaterialCommunityIcons';
+import Lock from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
 
 const SignUp = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigation = useNavigation();
+
+  const handleSignUp = async () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://192.168.1.3:5000/signUp', {
+        email,
+        password,
+      });
+
+      if (response.status === 201) {
+        Alert.alert('Success', 'Account created successfully!');
+        navigation.navigate('Login'); // Navigate to Login screen
+      }
+    } catch (error) {
+      if (error.response) {
+        // Check if error.response exists and handle it
+        console.log('Error Response:', error.response);
+        Alert.alert('Error', error.response.data.message || 'Sign-up failed.');
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log('Error Request:', error.request);
+        Alert.alert('Error', 'No response received. Please try again later.');
+      } else {
+        // Something else happened in setting up the request
+        console.log('Error Message:', error.message);
+        Alert.alert('Error', `Something went wrong: ${error.message}`);
+      }
+    }
+  };
+
   return (
     <ScrollView style={styles.mainContainer}>
-      <Text
-        style={{
-          fontSize: 30,
-          fontWeight: '700',
-          fontStyle: 'italic',
-          margin: 10,
-          alignSelf: 'center',
-          alignItems: 'center',
-          marginTop: 20,
-        }}>
-        Hey! Let's start with your an intro
-      </Text>
+      <Text style={styles.title}>SignUp</Text>
+
+      <Text style={styles.subtitle}>Healthcare</Text>
+
       <View style={styles.infoContainer}>
-        <View style={styles.nameContainer}>
-          <TextInput style={styles.name} placeholder="Enter Your First Name" />
-          <TextInput style={styles.name} placeholder="Enter Your Last Name" />
+        <View style={styles.infoContainerEmail}>
+          <Mail name="email-outline" size={28} />
+          <TextInput
+            style={styles.info}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
         </View>
-        <View style={styles.line}></View>
-        <TextInput style={styles.info} placeholder="Email" />
-        <View style={styles.line}></View>
-        <TextInput style={styles.info} placeholder="Age" />
-        <View style={styles.line}></View>
-        <TextInput style={styles.info} placeholder="Number" />
-        <View style={styles.line}></View>
-        <View style={styles.nameContainer}>
-          <TextInput style={styles.name} placeholder="Country" />
-          <TextInput style={styles.name} placeholder="City" />
+
+        <View style={styles.infoContainerEmail}>
+          <Lock name="lock" size={28} />
+          <TextInput
+            style={styles.info}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
         </View>
-        <View style={styles.line}></View>
-        <TextInput style={styles.info} placeholder="Gender" />
+
+        <View style={styles.infoContainerEmail}>
+          <Lock name="lock" size={28} />
+          <TextInput
+            style={styles.info}
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+          />
+        </View>
       </View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Login')}
-        style={styles.SignUpButton}>
+
+      {/* <View style={styles.accountContainer}>
+        <Text style={styles.accountText}>Already have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={[styles.accountText, styles.accountRegistration]}>
+            Click here to login
+          </Text>
+        </TouchableOpacity>
+      </View> */}
+
+      <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
         <Text style={styles.signUpText}>Sign Up</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -61,55 +121,68 @@ export default SignUp;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#fff',
     padding: 20,
   },
-  infoContainer: {
-    backgroundColor: '#fff',
-    padding: 10,
-    justifyContent: 'space-between',
-    flex: 1,
-    // borderWidth: 1,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-  nameContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  name: {
-    borderRadius: 10,
-    borderWidth: 1,
-    width: '45%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingLeft: 10,
-    margin: 5,
-  },
-  info: {
-    borderWidth: 1,
-    borderRadius: 10,
-    margin: 5,
-    alignItems: 'center',
-    paddingLeft: 10,
-    marginTop: 10,
-  },
-  line: {
-    width: '95%',
-    borderWidth: 0.5,
-    margin: 5,
+  title: {
+    fontSize: 30,
+    fontWeight: '700',
+    fontStyle: 'italic',
     alignSelf: 'center',
   },
-  SignUpButton: {
-    backgroundColor: '#ff8c00',
+  subtitle: {
+    fontSize: 50,
+    fontWeight: '500',
+    fontStyle: 'italic',
+    margin: 10,
+    alignSelf: 'center',
+    marginTop: 50,
+  },
+  infoContainer: {
+    padding: 10,
+    justifyContent: 'space-around',
+    flex: 1,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  infoContainerEmail: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    alignItems: 'center',
+    padding: 6,
+    borderRadius: 10,
+    margin: 5,
+    width: '100%',
+    height: 68,
+  },
+  info: {
+    marginLeft: 10,
+    flex: 1,
+    fontSize: 18,
+  },
+  accountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    padding: 5,
+    marginTop: 50,
+  },
+  accountText: {fontWeight: '500', fontSize: 16, lineHeight: 25},
+  accountRegistration: {
+    color: '#04238E',
+    marginLeft: 4,
+  },
+  signUpButton: {
+    backgroundColor: '#5391B4',
     padding: 10,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 50,
+    height: 66,
   },
   signUpText: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '600',
     color: '#fff',
   },

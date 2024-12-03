@@ -76,7 +76,7 @@ const Navigation = () => {
         {/* <Stack.Screen name="signUp" component={SignUp} /> */}
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="HomeScreen" component={MyTabs} />
-        <Stack.Screen name="Gender" component={Gender} />
+        <Stack.Screen name="SignUp" component={SignUp} />
       </Stack.Navigator>
     </NavigationContainer>
   );
