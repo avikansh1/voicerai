@@ -11,7 +11,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Image} from 'react-native';
 import Calendar from '../Homescreen/Calendar';
 import Notes from '../Homescreen/Notes';
-import getPharmancy from '../Homescreen/getPharmancy';
+import GetPharmacy from '../Homescreen/GetPharmacy';
 
 const Navigation = () => {
   const Stack = createNativeStackNavigator();
@@ -56,8 +56,8 @@ const Navigation = () => {
           }}
         />
         <Tab.Screen
-          name="getPharmancy"
-          component={getPharmancy}
+          name="GetPharmacy"
+          component={GetPharmacy}
           options={{
             tabBarIcon: ({color, size}) => (
               <Image source={require('../../assets/File.png')} />

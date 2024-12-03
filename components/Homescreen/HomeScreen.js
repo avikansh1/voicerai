@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import {
+  Animated,
   Image,
-  ImageBackground,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,9 +10,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 
 const HomeScreen = () => {
+  const slideMedicalAnim = useRef(new Animated.Value(-200)).current; // Start off-screen
+  const slideOfferAnim = useRef(new Animated.Value(300)).current; // Start below screen
+
+  useEffect(() => {
+    // Slide in the `medicalServiceContainer`
+    Animated.timing(slideMedicalAnim, {
+      toValue: 0, // Slide to its position
+      duration: 800, // Duration in milliseconds
+      useNativeDriver: true,
+    }).start();
+
+    // Slide in the `offerBottomContainer`
+    Animated.timing(slideOfferAnim, {
+      toValue: 0, // Slide to its position
+      duration: 800, // Duration in milliseconds
+      delay: 400, // Add delay for staggered effect
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   return (
     <ScrollView>
       <View style={styles.mainComponent}>
@@ -84,7 +105,11 @@ const HomeScreen = () => {
         </View>
 
         <View style={styles.mainBottomContainer}>
-          <View style={styles.medicalServiceContainer}>
+          <Animated.View
+            style={[
+              styles.medicalServiceContainer,
+              {transform: [{translateY: slideMedicalAnim}]},
+            ]}>
             <View style={{width: '70%'}}>
               <Text style={styles.medicalServiceUpperText}>Get the Best</Text>
               <Text style={styles.medicalServiceUpperText}>
@@ -97,12 +122,16 @@ const HomeScreen = () => {
               </Text>
             </View>
             <Image style={{}} source={require('../../assets/docImage.png')} />
-          </View>
+          </Animated.View>
           <Image
             style={styles.backgroundImage}
             source={require('../../assets/backgroundImage.png')}
           />
-          <View style={styles.offerBottomContainer}>
+          <Animated.View
+            style={[
+              styles.offerBottomContainer,
+              {transform: [{translateX: slideOfferAnim}]},
+            ]}>
             <View style={{}}>
               <View style={styles.offerBottomInfoContainer}>
                 <Image source={require('../../assets/UPTO.png')} />
@@ -147,7 +176,7 @@ const HomeScreen = () => {
               //   resizeMethod="resize"
               source={require('../../assets/Vitamins.png')}
             />
-          </View>
+          </Animated.View>
         </View>
       </View>
     </ScrollView>
