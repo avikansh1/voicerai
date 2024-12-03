@@ -12,32 +12,67 @@ import {
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import LeftArrow from 'react-native-vector-icons/AntDesign';
+import Mail from 'react-native-vector-icons/MaterialCommunityIcons';
+import Lock from 'react-native-vector-icons/FontAwesome';
 
 const Login = () => {
   const navigation = useNavigation();
   return (
     <ScrollView style={styles.mainContainer}>
-      <Pressable onPress={() => navigation.goBack()}>
-        <LeftArrow name="arrowleft" size={25} />
-      </Pressable>
       <Text
         style={{
           fontSize: 30,
           fontWeight: '700',
           fontStyle: 'italic',
+          // margin: 10,
+          alignSelf: 'center',
+          alignItems: 'center',
+          // marginTop: 20,
+        }}>
+        Login
+      </Text>
+
+      <Text
+        style={{
+          fontSize: 50,
+          fontWeight: '500',
+          fontStyle: 'italic',
           margin: 10,
           alignSelf: 'center',
           alignItems: 'center',
-          marginTop: 20,
+          marginTop: 50,
         }}>
-        Hey! Login To Start
+        Healthcare
       </Text>
-      <View style={styles.infoContainer}>
-        <TextInput style={styles.info} placeholder="Email" />
 
-        <TextInput style={styles.info} placeholder="Number" />
+      <View style={styles.infoContainer}>
+        <View style={styles.infoContainerEmail}>
+          <Mail name="email-outline" size={28} />
+          <TextInput style={styles.info} placeholder="Email" />
+        </View>
+
+        <View style={styles.infoContainerEmail}>
+          <Lock name="lock" size={28} />
+          <TextInput style={styles.info} placeholder="Number" />
+        </View>
+        <Text
+          style={{alignSelf: 'flex-end', right: 'right', textAlign: 'right'}}>
+          Forgot Password !
+        </Text>
       </View>
-      <TouchableOpacity style={styles.SignUpButton}>
+
+      <View style={styles.accountContainer}>
+        <Text style={styles.accountText}>Don’t Have an Account :</Text>
+        <TouchableOpacity>
+          <Text style={[styles.accountText, styles.accountRegistration]}>
+            Click here to register
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity
+        onPress={() => navigation.navigate('HomeScreen')}
+        style={styles.SignUpButton}>
         <Text style={styles.signUpText}>Login</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -49,13 +84,13 @@ export default Login;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#fff',
     padding: 20,
   },
   infoContainer: {
-    backgroundColor: '#fff',
+    // backgroundColor: 'yellow',
     padding: 10,
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     flex: 1,
     // borderWidth: 1,
     borderRadius: 10,
@@ -75,12 +110,15 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   info: {
-    borderWidth: 1,
-    borderRadius: 10,
+    // borderWidth: 1,
+    // borderRadius: 10,
     margin: 5,
     alignItems: 'center',
     paddingLeft: 10,
     marginTop: 10,
+    // backgroundColor: 'green',
+    fontSize: 20,
+    fontWeight: '400',
   },
   line: {
     width: '95%',
@@ -89,16 +127,40 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   SignUpButton: {
-    backgroundColor: '#ff8c00',
+    backgroundColor: '#5391B4',
     padding: 10,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 100,
+    height: 66,
   },
   signUpText: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '600',
     color: '#fff',
+  },
+  infoContainerEmail: {
+    flexDirection: 'row',
+    // backgroundColor: 'red',
+    borderWidth: 1,
+    alignItems: 'center',
+    padding: 6,
+    borderRadius: 10,
+    margin: 5,
+    width: '100%',
+    height: 68,
+  },
+  accountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    padding: 5,
+    marginTop: 50,
+  },
+  accountText: {fontWeight: '500', fontSize: 16, lineHeight: 25},
+  accountRegistration: {
+    color: '#04238E',
+    marginLeft: 4,
   },
 });

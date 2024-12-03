@@ -1,19 +1,11 @@
+import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import SignUp from './components/authentication/SignUp';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Login from './components/authentication/Login';
-import {NavigationContainer} from '@react-navigation/native';
+import Navigation from './components/navigation/Navigation';
 
 const App = () => {
-  const Stack = createNativeStackNavigator();
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="signUp" component={SignUp} />
-        <Stack.Screen name="Login" component={Login} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  return <Navigation />;
 };
 
 export default App;
+
+const styles = StyleSheet.create({});
