@@ -1,5 +1,4 @@
 /* eslint-disable react/self-closing-comp */
-/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {
   ScrollView,
@@ -21,7 +20,12 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigation = useNavigation();
 
+  const API_URL =
+    'https://HealthCare-Avikansh.netlify.app/.netlify/functions/signUp';
+
   const handleSignUp = async () => {
+    console.log('SignUp button pressed'); // Debug: Confirm button is pressed
+
     if (!email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
@@ -33,27 +37,34 @@ const SignUp = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.3:5000/signUp', {
+      console.log('Sending signup request to server...'); // Debug: Track API call
+      const response = await axios.post(API_URL, {
         email,
         password,
       });
 
+      console.log('Response received:', response.data); // Debug: Log server response
+
       if (response.status === 201) {
         Alert.alert('Success', 'Account created successfully!');
         navigation.navigate('Login'); // Navigate to Login screen
+      } else {
+        Alert.alert('Error', 'Unexpected response. Please try again.');
       }
     } catch (error) {
+      console.error('SignUp Error:', error); // Debug: Log full error for analysis
+
       if (error.response) {
-        // Check if error.response exists and handle it
-        console.log('Error Response:', error.response);
+        // Server error response
+        console.error('Error Response:', error.response);
         Alert.alert('Error', error.response.data.message || 'Sign-up failed.');
       } else if (error.request) {
-        // The request was made but no response was received
-        console.log('Error Request:', error.request);
+        // No response received
+        console.error('Error Request:', error.request);
         Alert.alert('Error', 'No response received. Please try again later.');
       } else {
-        // Something else happened in setting up the request
-        console.log('Error Message:', error.message);
+        // Other errors
+        console.error('Error Message:', error.message);
         Alert.alert('Error', `Something went wrong: ${error.message}`);
       }
     }
@@ -62,11 +73,10 @@ const SignUp = () => {
   return (
     <ScrollView style={styles.mainContainer}>
       <Text style={styles.title}>SignUp</Text>
-
       <Text style={styles.subtitle}>Healthcare</Text>
 
       <View style={styles.infoContainer}>
-        <View style={styles.infoContainerEmail}>
+        <View style={styles.inputRow}>
           <Mail name="email-outline" size={28} />
           <TextInput
             style={styles.info}
@@ -77,7 +87,7 @@ const SignUp = () => {
           />
         </View>
 
-        <View style={styles.infoContainerEmail}>
+        <View style={styles.inputRow}>
           <Lock name="lock" size={28} />
           <TextInput
             style={styles.info}
@@ -88,7 +98,7 @@ const SignUp = () => {
           />
         </View>
 
-        <View style={styles.infoContainerEmail}>
+        <View style={styles.inputRow}>
           <Lock name="lock" size={28} />
           <TextInput
             style={styles.info}
@@ -99,15 +109,6 @@ const SignUp = () => {
           />
         </View>
       </View>
-
-      {/* <View style={styles.accountContainer}>
-        <Text style={styles.accountText}>Already have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={[styles.accountText, styles.accountRegistration]}>
-            Click here to login
-          </Text>
-        </TouchableOpacity>
-      </View> */}
 
       <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
         <Text style={styles.signUpText}>Sign Up</Text>
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
   },
-  infoContainerEmail: {
+  inputRow: {
     flexDirection: 'row',
     borderWidth: 1,
     alignItems: 'center',
@@ -159,18 +160,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flex: 1,
     fontSize: 18,
-  },
-  accountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    padding: 5,
-    marginTop: 50,
-  },
-  accountText: {fontWeight: '500', fontSize: 16, lineHeight: 25},
-  accountRegistration: {
-    color: '#04238E',
-    marginLeft: 4,
   },
   signUpButton: {
     backgroundColor: '#5391B4',
