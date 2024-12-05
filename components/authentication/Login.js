@@ -25,7 +25,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.3:8000/login', {
+      const response = await axios.post('http://192.168.1.3:5000/login', {
         email,
         password,
       });
@@ -60,6 +60,7 @@ const Login = () => {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            placeholderTextColor="#000"
           />
         </View>
 
@@ -71,6 +72,7 @@ const Login = () => {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            placeholderTextColor="#000"
           />
         </View>
         <Text style={{alignSelf: 'flex-end'}}>Forgot Password !</Text>
@@ -134,6 +136,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flex: 1,
     fontSize: 18,
+    color: 'black',
   },
   accountContainer: {
     flexDirection: 'row',

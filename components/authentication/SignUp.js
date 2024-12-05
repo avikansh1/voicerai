@@ -20,7 +20,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigation = useNavigation();
 
-  const API_URL = 'http://192.168.1.3:8000/signUp';
+  const API_URL = 'http://192.168.1.3:5000/signUp';
 
   const handleSignUp = async () => {
     console.log('SignUp button pressed'); // Debug: Confirm button is pressed
@@ -83,6 +83,7 @@ const SignUp = () => {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            placeholderTextColor="black"
           />
         </View>
 
@@ -94,6 +95,7 @@ const SignUp = () => {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
+            placeholderTextColor="black"
           />
         </View>
 
@@ -105,6 +107,7 @@ const SignUp = () => {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
+            placeholderTextColor="black"
           />
         </View>
       </View>
@@ -159,6 +162,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flex: 1,
     fontSize: 18,
+    color: 'black',
   },
   signUpButton: {
     backgroundColor: '#5391B4',

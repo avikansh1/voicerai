@@ -11,58 +11,67 @@ import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 const GetPharmacy = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
 
+  // Updated handleFileUpload to integrate with Cloudinary
   const handleFileUpload = async () => {
     try {
-      // Open Document Picker
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images, DocumentPicker.types.pdf],
+      // Open the image picker to select an image
+      const result = await launchImageLibrary({
+        mediaType: 'photo', // Allow photos only
+        quality: 0.5, // Set the image quality
+        includeBase64: true, // If you want to upload images in base64
       });
 
+      if (result.didCancel) {
+        Alert.alert('Cancelled', 'File upload was cancelled.');
+        return;
+      }
+
       const file = {
-        uri: res[0].uri,
-        type: res[0].type,
-        name: res[0].name,
+        uri: result.assets[0].uri, // The file URI
+        type: result.assets[0].type, // The file type
+        name: result.assets[0].fileName, // The file name
       };
 
+      // Create a new FormData object and append the file and other parameters
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('upload_preset', 'your_upload_preset'); // Set your Upload Preset here
-      formData.append('cloud_name', 'dy0pc1pjb'); // Your Cloud Name here
+      formData.append('upload_preset', 'your_upload_preset'); // Replace with your preset
+      formData.append('cloud_name', 'dy0pc1pjb'); // Your Cloudinary cloud name
 
-      setUploading(true);
+      // Log the FormData to inspect its contents before making the API request
+      console.log('FormData:', formData);
 
-      // Upload to Cloudinary
-      const response = await axios.post(
-        'https://api.cloudinary.com/v1_1/dy0pc1pjb/upload', // Cloudinary API endpoint
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      // Directly use Cloudinary URL in the API call
+      const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dy0pc1pjb/upload'; // Cloudinary upload endpoint
+
+      // Perform the upload using axios
+      const response = await axios.post(cloudinaryUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-      );
+      });
 
-      setUploadedFileUrl(response.data.secure_url); // Save uploaded file URL
-      setUploading(false);
-      Alert.alert('Upload Successful', 'File uploaded successfully!');
-    } catch (error) {
-      setUploading(false);
-      if (DocumentPicker.isCancel(error)) {
-        Alert.alert('Cancelled', 'File upload cancelled.');
+      if (response.status === 200) {
+        Alert.alert('Success', 'File uploaded successfully!');
+        console.log(response.data.secure_url); // Print the uploaded file URL
+        setUploadedFileUrl(response.data.secure_url); // Optionally store the URL
       } else {
-        Alert.alert('Upload Failed', 'Something went wrong.');
+        Alert.alert('Error', 'Something went wrong during upload.');
       }
+    } catch (error) {
+      console.error('Error uploading file: ', error);
+      Alert.alert('Error', 'An error occurred while uploading.');
     }
   };
 
   const handleLinkUpload = () => {
     Alert.alert('Upload Link', 'You can paste your document link here.');
-    // Add your logic for link upload, e.g., open a modal or text input for the link
   };
 
   const DATA = [
@@ -88,7 +97,7 @@ const GetPharmacy = () => {
       distance: '7km Away',
       rating: 4.2,
       reviews: 75,
-      image: require('../../assets/image1.png'), // Replace with your image path
+      image: require('../../assets/image1.png'),
     },
     {
       id: '4',
@@ -96,7 +105,7 @@ const GetPharmacy = () => {
       distance: '7km Away',
       rating: 4.2,
       reviews: 75,
-      image: require('../../assets/image1.png'), // Replace with your image path
+      image: require('../../assets/image1.png'),
     },
   ];
 
@@ -207,16 +216,13 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   headerContainer: {
-    // backgroundColor: 'red',
     flexDirection: 'row',
     alignItems: 'center',
   },
   card: {
-    // flexDirection: 'row',
     backgroundColor: '#f8f8f8',
     borderRadius: 10,
     marginVertical: 8,
-    // padding: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
