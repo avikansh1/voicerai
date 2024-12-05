@@ -25,13 +25,10 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(
-        'https://healthcare-avikansh.netlify.app/.netlify/functions/login',
-        {
-          email,
-          password,
-        },
-      );
+      const response = await axios.post('http://192.168.1.3:8000/login', {
+        email,
+        password,
+      });
 
       const data = response.data;
 
@@ -88,9 +85,7 @@ const Login = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate('HomeScreen')}
-        style={styles.signUpButton}>
+      <TouchableOpacity onPress={handleLogin} style={styles.signUpButton}>
         <Text style={styles.signUpText}>Login</Text>
       </TouchableOpacity>
     </ScrollView>

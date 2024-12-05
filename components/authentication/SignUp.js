@@ -20,8 +20,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigation = useNavigation();
 
-  const API_URL =
-    'https://HealthCare-Avikansh.netlify.app/.netlify/functions/signUp';
+  const API_URL = 'http://192.168.1.3:8000/signUp';
 
   const handleSignUp = async () => {
     console.log('SignUp button pressed'); // Debug: Confirm button is pressed
